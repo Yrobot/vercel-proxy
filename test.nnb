@@ -3,7 +3,7 @@
         {
             "language": "typescript",
             "source": [
-                "(async () => {\n  fetch(`http://localhost:3003/161.186.160.93/geo`, {\n    headers: {\n      proxy: \"https://ipinfo.io1\",\n      token: \"TOKEN\",\n      origin: \"http://localhost:3001\",\n    },\n  })\n    .then((res) => res?.text() ?? res?.json())\n    .then(console.log);\n})();\n"
+                "(async () => {\n  fetch(`http://localhost:3003/161.186.160.93/geo`, {\n    headers: {\n      proxy: \"https://ipinfo.i1o\",\n      token: \"TOKEN\",\n      origin: \"http://localhost:3000\",\n    },\n  })\n    .then((res) => res?.text() ?? res?.json())\n    .then(console.log);\n})();\n"
             ],
             "outputs": [
                 {
@@ -11,7 +11,7 @@
                         {
                             "mime": "application/vnd.code.notebook.stdout",
                             "value": [
-                                "Error: Proxy fail: getaddrinfo ENOTFOUND ipinfo.io1 [https://ipinfo.io1/]",
+                                "Error: Proxy fail: getaddrinfo ENOTFOUND ipinfo.i1o [https://ipinfo.i1o/]",
                                 ""
                             ]
                         }

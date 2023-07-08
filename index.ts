@@ -2,6 +2,7 @@ import express, { Express, Request, Response, NextFunction } from "express";
 import { createProxyMiddleware } from "http-proxy-middleware";
 import type { ClientRequest } from "http";
 import cors from "cors";
+import morgan from "morgan";
 
 const app: Express = express();
 const port = process.env.PORT ?? 3003;
@@ -27,6 +28,22 @@ const getTarget = (req: Request): string => {
   if (!target) throw new Error("No proxy target provided");
   return `${target}`;
 };
+
+app.use(
+  morgan(function (tokens, req, res) {
+    return [
+      `[Log]:`,
+      req.headers["origin"], // from
+      getTarget(req), // to
+      tokens.method(req, res), // method
+      tokens.url(req, res), // path
+      tokens.status(req, res), // status
+      tokens["response-time"](req, res) + "ms", // response time
+    ]
+      .map((v) => v || "NULL")
+      .join(" ");
+  })
+);
 
 const BLOCK_HEADER_KEYS: (string | RegExp)[] = [
   // "host",
@@ -70,7 +87,7 @@ const proxyMiddleware = createProxyMiddleware({
     const targetUrl: string =
       typeof target === "object" ? (target?.href as string) : target;
     errorHandler(
-      new Error(`Proxy fail: ${err.message} [${targetUrl}]`),
+      new Error(`Proxy fail: ${err.message} -> ${targetUrl}`),
       req,
       res
     );
