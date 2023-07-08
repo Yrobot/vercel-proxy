@@ -5,10 +5,19 @@ import cors from "cors";
 
 const app: Express = express();
 const port = process.env.PORT ?? 3003;
+var corsWhiteList: string[] = process.env?.CORS?.split(",") ?? [];
 
 app.use(
   cors({
-    origin: "*",
+    origin: (origin = "", callback) => {
+      if (corsWhiteList.length === 0) {
+        callback(null, true);
+      } else if (corsWhiteList.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Origin Not allowed by CORS"));
+      }
+    },
   })
 );
 
@@ -46,7 +55,7 @@ const errorHandler = (
   res: Response,
   next: NextFunction = () => {}
 ) => {
-  console.error(err.message);
+  console.error("[Error]: ", err.message);
   res.status(400).send(`Error: ${err.message}`);
 };
 
@@ -73,5 +82,5 @@ app.use(proxyMiddleware);
 app.use(errorHandler);
 
 app.listen(port, () => {
-  console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
+  console.log(`[Server]: Proxy Server is running at http://localhost:${port}`);
 });
