@@ -5,7 +5,7 @@
   "public": false,
   "routes": [
     {
-      "src": "*",
+      "src": "/(.*)",
       "dest": "dist/index.js"
     }
   ]
