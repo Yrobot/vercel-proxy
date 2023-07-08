@@ -6,6 +6,7 @@
   "scripts": {
     "build": "npx tsc",
     "start": "node dist/index.js",
+    "vercel-build": "npm run build && npm run start",
     "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\""
   },
   "author": "yrobot",
@@ -20,6 +21,7 @@
   },
   "dependencies": {
     "@types/morgan": "^1.9.4",
+    "@vercel/node": "^2.15.3",
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "http-proxy-middleware": "^2.0.6",

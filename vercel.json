@@ -1,12 +1,7 @@
 {
   "version": 2,
   "env": {},
+  "buildCommand": "npm run vercel-build",
   "builds": [{ "src": "*.js", "use": "@vercel/node" }],
-  "public": false,
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "dist/index.js"
-    }
-  ]
+  "public": false
 }
