@@ -34,18 +34,20 @@ app.use((0, cors_1.default)({
     },
 }));
 // target source: 1. headers.proxy 2. urlQuery.proxy
-const getTarget = (req) => {
-    var _a, _b, _c;
-    const target = (_b = (_a = req === null || req === void 0 ? void 0 : req.headers) === null || _a === void 0 ? void 0 : _a.proxy) !== null && _b !== void 0 ? _b : (_c = req === null || req === void 0 ? void 0 : req.query) === null || _c === void 0 ? void 0 : _c.proxy;
+const getTarget = (req, onError = () => {
+    throw new Error("No proxy target provided");
+}) => {
+    var _a, _b, _c, _d;
+    const target = (_d = (_b = (_a = req === null || req === void 0 ? void 0 : req.headers) === null || _a === void 0 ? void 0 : _a.proxy) !== null && _b !== void 0 ? _b : (_c = req === null || req === void 0 ? void 0 : req.query) === null || _c === void 0 ? void 0 : _c.proxy) !== null && _d !== void 0 ? _d : "";
     if (!target)
-        throw new Error("No proxy target provided");
+        onError === null || onError === void 0 ? void 0 : onError();
     return `${target}`;
 };
 app.use((0, morgan_1.default)(function (tokens, req, res) {
     return [
         `[Log]:`,
         req.headers["origin"],
-        getTarget(req),
+        getTarget(req, null),
         tokens.method(req, res),
         tokens.url(req, res),
         tokens.status(req, res),
@@ -54,6 +56,14 @@ app.use((0, morgan_1.default)(function (tokens, req, res) {
         .map((v) => v || "NULL")
         .join(" ");
 }));
+app.use((req, res, next) => {
+    if (req.method === "GET" && !getTarget(req, null)) {
+        res.status(200).send("Hello Vercel-Proxy🚀🚀🚀");
+    }
+    else {
+        next();
+    }
+});
 const BLOCK_HEADER_KEYS = [
     // "host",
     "proxy",

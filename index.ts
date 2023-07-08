@@ -23,9 +23,14 @@ app.use(
 );
 
 // target source: 1. headers.proxy 2. urlQuery.proxy
-const getTarget = (req: Request): string => {
-  const target = req?.headers?.proxy ?? req?.query?.proxy;
-  if (!target) throw new Error("No proxy target provided");
+const getTarget = (
+  req: Request,
+  onError: Function | null = () => {
+    throw new Error("No proxy target provided");
+  }
+): string => {
+  const target = req?.headers?.proxy ?? req?.query?.proxy ?? "";
+  if (!target) onError?.();
   return `${target}`;
 };
 
@@ -34,7 +39,7 @@ app.use(
     return [
       `[Log]:`,
       req.headers["origin"], // from
-      getTarget(req), // to
+      getTarget(req, null), // to
       tokens.method(req, res), // method
       tokens.url(req, res), // path
       tokens.status(req, res), // status
@@ -44,6 +49,14 @@ app.use(
       .join(" ");
   })
 );
+
+app.use((req, res, next) => {
+  if (req.method === "GET" && !getTarget(req, null)) {
+    res.status(200).send("Hello Vercel-Proxy🚀🚀🚀");
+  } else {
+    next();
+  }
+});
 
 const BLOCK_HEADER_KEYS: (string | RegExp)[] = [
   // "host",
