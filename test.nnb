@@ -3,23 +3,15 @@
         {
             "language": "typescript",
             "source": [
-                "(async () => {\n  fetch(`http://localhost:3003/161.186.160.93/geo`, {\n    headers: { proxy: \"https://ipinfo.io\", token: \"TOKEN\" },\n  })\n    .then((res) => res?.json() ?? res?.text())\n    .then(console.log);\n})();\n"
+                "(async () => {\n  fetch(`http://localhost:3003/161.186.160.93/geo`, {\n    headers: { proxy: \"https://ipinfo.io\", token: \"TOKEN\" },\n  })\n    .then((res) => res?.text() ?? res?.json())\n    .then(console.log);\n})();\n"
             ],
             "outputs": [
                 {
                     "items": [
                         {
-                            "mime": "application/vnd.code.notebook.stderr",
+                            "mime": "application/vnd.code.notebook.stdout",
                             "value": [
-                                "SyntaxError: Unexpected token < in JSON at position 0",
-                                "    at JSON.parse (<anonymous>)",
-                                "    at parseJSONFromBytes (node:internal/deps/undici/undici:6492:19)",
-                                "    at successSteps (node:internal/deps/undici/undici:6466:27)",
-                                "    at node:internal/deps/undici/undici:1141:60",
-                                "    at node:internal/process/task_queues:140:7",
-                                "    at AsyncResource.runInAsyncScope (node:async_hooks:204:9)",
-                                "    at AsyncResource.runMicrotask (node:internal/process/task_queues:137:8)",
-                                "    at processTicksAndRejections (node:internal/process/task_queues:95:5)",
+                                "Error: Proxy fail: getaddrinfo ENOTFOUND ipinfo.io1. https://ipinfo.io1/",
                                 ""
                             ]
                         }
@@ -30,9 +22,31 @@
         {
             "language": "typescript",
             "source": [
-                "(async () => {\n  fetch(`http://localhost:3003/161.185.160.93/geo?proxy=https://ipinfo.io`)\n    .then((res) => res?.json() ?? res?.text())\n    .then(console.log);\n})();\n"
+                "(async () => {\n  fetch(`http://localhost:3003/161.185.160.93/geo?proxy=https://ipinfo.io`)\n    .then((res) => res?.text() ?? res?.json())\n    .then(console.log);\n})();\n"
             ],
-            "outputs": []
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "{",
+                                "  \"ip\": \"161.185.160.93\",",
+                                "  \"city\": \"New York City\",",
+                                "  \"region\": \"New York\",",
+                                "  \"country\": \"US\",",
+                                "  \"loc\": \"40.7143,-74.0060\",",
+                                "  \"org\": \"AS22252 The City of New York\",",
+                                "  \"postal\": \"10001\",",
+                                "  \"timezone\": \"America/New_York\",",
+                                "  \"readme\": \"https://ipinfo.io/missingauth\"",
+                                "}",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
         }
     ]
 }

@@ -1,13 +1,16 @@
-import express, { Express, Request, Response } from "express";
+import express, { Express, Request, Response, NextFunction } from "express";
 import { createProxyMiddleware } from "http-proxy-middleware";
+import type { ClientRequest } from "http";
+import cors from "cors";
 
 const app: Express = express();
 const port = process.env.PORT ?? 3003;
 
-const errorHandler = (err: Error, res: Response) => {
-  console.error(err.message);
-  res.status(400).send(`Error: ${err.message}`);
-};
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
 // target source: 1. headers.proxy 2. urlQuery.proxy
 const getTarget = (req: Request): string => {
@@ -16,30 +19,58 @@ const getTarget = (req: Request): string => {
   return `${target}`;
 };
 
-app.use(function (req: Request, res: Response, next) {
-  try {
-    const target = getTarget(req); // dynamic target solution2: https://github.com/chimurai/http-proxy-middleware#router-objectfunction
-    return createProxyMiddleware({
-      target,
-      changeOrigin: true,
-      onProxyReq: (proxyReq, req, res) => {
-        // console.log(proxyReq.getHeaders());
-      },
-      onError: (err, req, res, target) => {
-        errorHandler(
-          new Error(
-            `Proxy ${
-              typeof target === "object" ? target?.href : target
-            } Fail: ${err.message}`
-          ),
-          res
-        );
-      },
-    })(req, res, next);
-  } catch (error: any) {
-    errorHandler(error, res);
-  }
+const BLOCK_HEADER_KEYS: (string | RegExp)[] = [
+  // "host",
+  "proxy",
+  "referer",
+  "origin",
+  "user-agent",
+  /^sec-/g,
+];
+
+const removeHeaders = (proxyReq: ClientRequest): void => {
+  Object.keys(proxyReq.getHeaders() || {}).forEach((key) => {
+    if (
+      BLOCK_HEADER_KEYS.find((rule) =>
+        typeof rule === "string" ? rule === key : rule.test(key)
+      ) !== undefined
+    ) {
+      proxyReq.removeHeader(key);
+    }
+  });
+};
+
+const errorHandler = (
+  err: Error,
+  req: Request,
+  res: Response,
+  next: NextFunction = () => {}
+) => {
+  console.error(err.message);
+  res.status(400).send(`Error: ${err.message}`);
+};
+
+const proxyMiddleware = createProxyMiddleware({
+  changeOrigin: true,
+  router: async (req) => getTarget(req),
+  onProxyReq: (proxyReq, req, res) => {
+    removeHeaders(proxyReq);
+    // console.log(proxyReq.getHeaders());
+  },
+  onError: (err, req, res, target = "") => {
+    const targetUrl: string =
+      typeof target === "object" ? (target?.href as string) : target;
+    errorHandler(
+      new Error(`Proxy fail: ${err.message} [${targetUrl}]`),
+      req,
+      res
+    );
+  },
 });
+
+app.use(proxyMiddleware);
+
+app.use(errorHandler);
 
 app.listen(port, () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
