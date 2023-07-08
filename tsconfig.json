@@ -1,27 +1,17 @@
 {
   "compilerOptions": {
+    "module": "commonjs",
+    "target": "es2016",
+    "moduleResolution": "node",
     "lib": [
-      "dom",
-      "dom.iterable",
       "esnext"
     ],
-    "allowJs": true,
     "skipLibCheck": true,
-    "strict": false,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "incremental": true,
+    "strict": true,
     "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "node",
     "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ]
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
   },
   "include": [
     "next-env.d.ts",
