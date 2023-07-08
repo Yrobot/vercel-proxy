@@ -5,8 +5,8 @@
   "main": "api/index.js",
   "scripts": {
     "build": "npx tsc",
-    "start": "node api/index.js",
-    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q api/index.js\""
+    "start": "node index.js",
+    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q index.js\""
   },
   "author": "yrobot",
   "license": "ISC",

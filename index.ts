@@ -101,3 +101,5 @@ app.use(errorHandler);
 app.listen(port, () => {
   console.log(`[Server]: Proxy Server is running at http://localhost:${port}`);
 });
+
+module.exports = app;
