@@ -1,12 +1,25 @@
 import express, { Express, Request, Response, NextFunction } from "express";
 import { createProxyMiddleware } from "http-proxy-middleware";
 import type { ClientRequest } from "http";
+import { readFileSync } from "fs";
 import cors from "cors";
+import { marked } from "marked";
 import morgan from "morgan";
 
 const app: Express = express();
 const port = process.env.PORT ?? 3003;
 var corsWhiteList: string[] = process.env?.CORS?.split(",") ?? [];
+
+let readmeHTML: string | null = null;
+const getReadmeHTML = async (): Promise<string> => {
+  try {
+    if (readmeHTML !== null) return readmeHTML;
+    readmeHTML = marked(await readFileSync("./README.md", "utf-8"));
+    return readmeHTML;
+  } catch (error) {
+    return "Hello Vercel-Proxy🚀🚀🚀";
+  }
+};
 
 app.use(
   cors({
@@ -50,9 +63,11 @@ app.use(
   })
 );
 
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
   if (req.method === "GET" && !getTarget(req, null)) {
-    res.status(200).send("Hello Vercel-Proxy🚀🚀🚀");
+    res
+      .status(200)
+      .send(req.originalUrl === "/" ? await getReadmeHTML() : "OK");
   } else {
     next();
   }

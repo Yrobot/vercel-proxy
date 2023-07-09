@@ -1,4 +1,4 @@
-# Vercel-Proxy
+# Vercel-Proxy 🚀🚀🚀
 
 A simple proxy for Vercel to bypass CORS restrictions.
 

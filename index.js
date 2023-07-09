@@ -15,11 +15,25 @@ var _a, _b, _c, _d;
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const http_proxy_middleware_1 = require("http-proxy-middleware");
+const fs_1 = require("fs");
 const cors_1 = __importDefault(require("cors"));
+const marked_1 = require("marked");
 const morgan_1 = __importDefault(require("morgan"));
 const app = (0, express_1.default)();
 const port = (_a = process.env.PORT) !== null && _a !== void 0 ? _a : 3003;
 var corsWhiteList = (_d = (_c = (_b = process.env) === null || _b === void 0 ? void 0 : _b.CORS) === null || _c === void 0 ? void 0 : _c.split(",")) !== null && _d !== void 0 ? _d : [];
+let readmeHTML = null;
+const getReadmeHTML = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        if (readmeHTML !== null)
+            return readmeHTML;
+        readmeHTML = (0, marked_1.marked)(yield (0, fs_1.readFileSync)("./README.md", "utf-8"));
+        return readmeHTML;
+    }
+    catch (error) {
+        return "Hello Vercel-Proxy🚀🚀🚀";
+    }
+});
 app.use((0, cors_1.default)({
     origin: (origin = "", callback) => {
         if (corsWhiteList.length === 0) {
@@ -56,14 +70,16 @@ app.use((0, morgan_1.default)(function (tokens, req, res) {
         .map((v) => v || "NULL")
         .join(" ");
 }));
-app.use((req, res, next) => {
+app.use((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     if (req.method === "GET" && !getTarget(req, null)) {
-        res.status(200).send("Hello Vercel-Proxy🚀🚀🚀");
+        res
+            .status(200)
+            .send(req.originalUrl === "/" ? yield getReadmeHTML() : "OK");
     }
     else {
         next();
     }
-});
+}));
 const BLOCK_HEADER_KEYS = [
     // "host",
     "proxy",

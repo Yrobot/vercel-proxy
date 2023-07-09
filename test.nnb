@@ -28,19 +28,79 @@
                 {
                     "items": [
                         {
+                            "mime": "application/vnd.code.notebook.stderr",
+                            "value": [
+                                "TypeError: fetch failed",
+                                "    at Object.fetch (node:internal/deps/undici/undici:11404:11)",
+                                "    at processTicksAndRejections (node:internal/process/task_queues:95:5) {",
+                                "  cause: Error: connect ECONNREFUSED 127.0.0.1:3003",
+                                "      at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1494:16)",
+                                "      at TCPConnectWrap.callbackTrampoline (node:internal/async_hooks:130:17) {",
+                                "    errno: -61,",
+                                "    code: 'ECONNREFUSED',",
+                                "    syscall: 'connect',",
+                                "    address: '127.0.0.1',",
+                                "    port: 3003",
+                                "  }",
+                                "}",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import { readFileSync } from \"fs\";\n\nconst markdownParser = (text) => {\n  const toHTML = text\n    .replace(/^### (.*$)/gim, \"<h3>$1</h3>\") // h3 tag\n    .replace(/^## (.*$)/gim, \"<h2>$1</h2>\") // h2 tag\n    .replace(/^# (.*$)/gim, \"<h1>$1</h1>\") // h1 tag\n    .replace(/\\*\\*(.*)\\*\\*/gim, \"<b>$1</b>\") // bold text\n    .replace(/\\*(.*)\\*/gim, \"<i>$1</i>\") // italic text\n    .replace(/\\`(.*)\\`/gim, \"<code>$1</code>\"); // code\n  return toHTML.trim(); // using trim method to remove whitespace\n};\n\n(async () => {\n  console.log(markdownParser(await readFileSync(\"./README.md\", \"utf-8\")));\n})();\n"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
                             "mime": "application/vnd.code.notebook.stdout",
                             "value": [
+                                "<h1>Vercel-Proxy</h1>",
+                                "",
+                                "A simple proxy for Vercel to bypass CORS restrictions.",
+                                "",
+                                "<h2>Usage</h2>",
+                                "",
+                                "for example, you want to access <code>https://target.com/path`(the origin url which you want to call, $ProxyHost/path ) with proxy `https://proxy.vercel.com</code>(the url where you serve the Vercel-Proxy, $Host )",
+                                "",
+                                "<h3>1. curl $Host/path?proxy=$ProxyHost</h3>",
+                                "",
+                                "<code>curl https://proxy.vercel.com/path?proxy=https://target.com</code>",
+                                "",
+                                "<h3>2. curl --header \"Proxy: $ProxyHost\" $Host/path</h3>",
+                                "",
+                                "<code>curl --header \"Proxy: https://target.com\" https://proxy.vercel.com/path</code>",
+                                "",
+                                "<h2>Dev Example</h2>",
+                                "",
+                                "launch the proxy server locally at <code>http://localhost:3003</code>, and try",
+                                "",
+                                "<code>curl --header \"Proxy: https://ipinfo.io\" http://localhost:3003/161.186.160.93/geo</code>",
+                                "",
+                                "OR",
+                                "",
+                                "<code>curl http://localhost:3003/161.186.160.93/geo\\?proxy\\=https://ipinfo.io</code>",
+                                "",
+                                "if you receive this json data, which means the proxy works.",
+                                "",
+                                "<code>`</code>json",
                                 "{",
-                                "  \"ip\": \"161.185.160.93\",",
-                                "  \"city\": \"New York City\",",
-                                "  \"region\": \"New York\",",
+                                "  \"ip\": \"161.186.160.93\",",
+                                "  \"city\": \"Washington\",",
+                                "  \"region\": \"Washington, D.C.\",",
                                 "  \"country\": \"US\",",
-                                "  \"loc\": \"40.7143,-74.0060\",",
-                                "  \"org\": \"AS22252 The City of New York\",",
-                                "  \"postal\": \"10001\",",
+                                "  \"loc\": \"38.8951,-77.0364\",",
+                                "  \"postal\": \"20068\",",
                                 "  \"timezone\": \"America/New_York\",",
                                 "  \"readme\": \"https://ipinfo.io/missingauth\"",
                                 "}",
+                                "<code>`</code>",
                                 ""
                             ]
                         }
