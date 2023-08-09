@@ -2,6 +2,12 @@
 
 A simple proxy for Vercel to bypass CORS restrictions.
 
+## Limit
+
+### 1. Vercel Serverless Function Payload Size Limit is 4.5 MB, large payload will be rejected by response status code 413.
+
+https://vercel.com/docs/concepts/limits/overview#serverless-function-payload-size-limit
+
 ## Usage
 
 for example, you want to access `https://target.com/path`(the origin url which you want to call, $ProxyHost/path ) with proxy `https://proxy.vercel.com`(the url where you serve the Vercel-Proxy, $Host )
