@@ -111,6 +111,7 @@ const proxyMiddleware = createProxyMiddleware({
     removeHeaders(proxyReq);
     // console.log(proxyReq.getHeaders());
   },
+  proxyTimeout: 1000 * 10, // for vercel 10s Execution Duration (timed out)
   onError: (err, req, res, target = "") => {
     const targetUrl: string =
       typeof target === "object" ? (target?.href as string) : target;
