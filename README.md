@@ -8,6 +8,12 @@ A simple proxy for Vercel to bypass CORS restrictions.
 
 https://vercel.com/docs/concepts/limits/overview#serverless-function-payload-size-limit
 
+## Origin white list
+
+if `process.env?.CORS` not exists, the proxy will accept all requests
+
+`process.env?.CORS` should be a string arr, split by `,`. like `a.com,b.com,c.com`
+
 ## Usage
 
 for example, you want to access `https://target.com/path`(the origin url which you want to call, $ProxyHost/path ) with proxy `https://proxy.vercel.com`(the url where you serve the Vercel-Proxy, $Host )
