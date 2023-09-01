@@ -114,7 +114,8 @@ const proxyMiddleware = createProxyMiddleware({
   router: async (req) => getTarget(req),
   onProxyReq: (proxyReq, req, res) => {
     removeHeaders(proxyReq);
-    proxyReq.setHeader("host", getTarget(req));
+    // 无需手动设置 host， http-proxy-middleware 会自动设置为 target 的 host
+    // proxyReq.setHeader("host", getTarget(req).replace(/^https?:\/\//, ""));
     // console.log(proxyReq.getHeaders());
   },
   onProxyRes: (proxyRes, req, res) => {
