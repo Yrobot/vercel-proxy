@@ -79,7 +79,7 @@ const BLOCK_HEADER_KEYS: (string | RegExp)[] = [
   "referer",
   "origin",
   "user-agent",
-  /^sec-/g,
+  /^sec-/,
 ];
 
 const removeHeaders = (proxyReq: ClientRequest): void => {
@@ -104,12 +104,23 @@ const errorHandler = (
   res.status(400).send(`Error: ${err.message}`);
 };
 
+const RES_REMOVE_HEADERS: string[] = [
+  "x-frame-options",
+  "content-security-policy",
+];
+
 const proxyMiddleware = createProxyMiddleware({
   changeOrigin: true,
   router: async (req) => getTarget(req),
   onProxyReq: (proxyReq, req, res) => {
     removeHeaders(proxyReq);
+    proxyReq.setHeader("host", getTarget(req));
     // console.log(proxyReq.getHeaders());
+  },
+  onProxyRes: (proxyRes, req, res) => {
+    RES_REMOVE_HEADERS.forEach((key) => {
+      delete proxyRes.headers[key];
+    });
   },
   proxyTimeout: 900 * 10, // for vercel 10s Execution Duration (timed out)
   onError: (err, req, res, target = "") => {

@@ -86,7 +86,7 @@ const BLOCK_HEADER_KEYS = [
     "referer",
     "origin",
     "user-agent",
-    /^sec-/g,
+    /^sec-/,
 ];
 const removeHeaders = (proxyReq) => {
     Object.keys(proxyReq.getHeaders() || {}).forEach((key) => {
@@ -99,13 +99,24 @@ const errorHandler = (err, req, res, next = () => { }) => {
     console.error("[Error]: ", err.message);
     res.status(400).send(`Error: ${err.message}`);
 };
+const RES_REMOVE_HEADERS = [
+    "x-frame-options",
+    "content-security-policy",
+];
 const proxyMiddleware = (0, http_proxy_middleware_1.createProxyMiddleware)({
     changeOrigin: true,
     router: (req) => __awaiter(void 0, void 0, void 0, function* () { return getTarget(req); }),
     onProxyReq: (proxyReq, req, res) => {
         removeHeaders(proxyReq);
+        proxyReq.setHeader("host", getTarget(req));
         // console.log(proxyReq.getHeaders());
     },
+    onProxyRes: (proxyRes, req, res) => {
+        RES_REMOVE_HEADERS.forEach((key) => {
+            delete proxyRes.headers[key];
+        });
+    },
+    proxyTimeout: 900 * 10,
     onError: (err, req, res, target = "") => {
         const targetUrl = typeof target === "object" ? target === null || target === void 0 ? void 0 : target.href : target;
         errorHandler(new Error(`Proxy fail: ${err.message} -> ${targetUrl}`), req, res);
